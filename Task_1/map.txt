@@ -1,4 +1,5 @@
 ABCDABCDABCDABCDABCD
+files/room_0.txt
 files/room_1.txt
 files/room_2.txt
 files/room_3.txt
@@ -18,4 +19,3 @@ files/room_16.txt
 files/room_17.txt
 files/room_18.txt
 files/room_19.txt
-files/room_20.txt
