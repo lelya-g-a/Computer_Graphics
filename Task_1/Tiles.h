@@ -26,9 +26,13 @@ public:
             for (int j = 0; j < tileSize; ++j)
             {
                 picture[tileSize * i + j] = backgroundColor;
-                picture[tileSize * i + j] = img.Data()
-                    [scale * img.Width() * (tileSize - 1 - i) + 
-                     scale * j];
+                if (img.Data()[scale * img.Width() * (tileSize - 1 - i) 
+                    + scale * j].a != 0) 
+                {
+                    picture[tileSize * i + j] = img.Data()
+                        [scale * img.Width() * (tileSize - 1 - i) + 
+                         scale * j];
+                }
             }
         }
         return picture;

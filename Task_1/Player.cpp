@@ -25,17 +25,46 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
             }
             if (screen.IsEmptyY(coords.x, coords.y + tileSize))
             {
-                Image img ("resources/game_over.png");
-                for (int i = 0; i < 320; ++i)
+                lifes -= 1;
+                if (lifes == 0)
                 {
-                    for (int j = 0; j < 320; ++j)
+                    Image img ("resources/game_over.png");
+                    for (int i = 0; i < 320; ++i)
                     {
-                        screen.PutPixel(j + tileSize, i + tileSize, 
-                            img.Data()[img.Width() * (319 - i) +  j]);
+                        for (int j = 0; j < 320; ++j)
+                        {
+                            if (img.Data()[img.Width() * 
+                                (319 - i) +  j].a == 0)
+                            {
+                                screen.PutPixel(j + tileSize, 
+                                                i + tileSize, 
+                                backgroundColor);
+                            }
+                            else
+                            {
+                                screen.PutPixel(j + tileSize, 
+                                                i + tileSize, 
+                                img.Data()[img.Width() * 
+                                                       (319 - i) +  j]);
+                            }
+                        }
                     }
+                    coords.x = -1;
+                    coords.y = -1;
                 }
-                coords.x = -1;
-                coords.y = -1;
+                else
+                {   
+                    coords.x = screen.XCoord();
+                    coords.y = screen.YCoord();
+                    
+                    lifeFlag = 1;
+                }
+                
+                int x = screen.Width() / tileSize - 1;
+                screen.PutPixels((x * tileSize), 
+                                 (2 * (lifes + 1) * tileSize), 
+                                 backgroundColor,
+                                 ' ');
             }
             break;
         case MovementDir::DOWN:
@@ -46,17 +75,46 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
             }
             if (screen.IsEmptyY(coords.x, coords.y))
             {
-                Image img ("resources/game_over.png");
-                for (int i = 0; i < 320; ++i)
+                lifes -= 1;
+                if (lifes == 0)
                 {
-                    for (int j = 0; j < 320; ++j)
+                    Image img ("resources/game_over.png");
+                    for (int i = 0; i < 320; ++i)
                     {
-                        screen.PutPixel(j + tileSize, i + tileSize, 
-                            img.Data()[img.Width() * (319 - i) +  j]);
+                        for (int j = 0; j < 320; ++j)
+                        {
+                            if (img.Data()[img.Width() * 
+                                (319 - i) +  j].a == 0)
+                            {
+                                screen.PutPixel(j + tileSize, 
+                                                i + tileSize, 
+                                backgroundColor);
+                            }
+                            else
+                            {
+                                screen.PutPixel(j + tileSize, 
+                                                i + tileSize, 
+                                img.Data()[img.Width() * 
+                                                       (319 - i) +  j]);
+                            }
+                        }
                     }
+                    coords.x = -1;
+                    coords.y = -1;
                 }
-                coords.x = -1;
-                coords.y = -1;
+                else
+                {
+                    coords.x = screen.XCoord();
+                    coords.y = screen.YCoord();
+                    
+                    lifeFlag = 1;
+                }
+                
+                int x = screen.Width() / tileSize - 1;
+                screen.PutPixels((x * tileSize), 
+                                 (2 * (lifes + 1) * tileSize), 
+                                 backgroundColor,
+                                 ' ');
             }
             break;
         case MovementDir::LEFT:
@@ -67,17 +125,46 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
             }
             if (screen.IsEmptyX(coords.x, coords.y))
             {
-                Image img ("resources/game_over.png");
-                for (int i = 0; i < 320; ++i)
+                lifes -= 1;
+                if (lifes == 0)
                 {
-                    for (int j = 0; j < 320; ++j)
+                    Image img ("resources/game_over.png");
+                    for (int i = 0; i < 320; ++i)
                     {
-                        screen.PutPixel(j + tileSize, i + tileSize, 
-                            img.Data()[img.Width() * (319 - i) +  j]);
+                        for (int j = 0; j < 320; ++j)
+                        {
+                            if (img.Data()[img.Width() * 
+                                (319 - i) +  j].a == 0)
+                            {
+                                screen.PutPixel(j + tileSize, 
+                                                i + tileSize, 
+                                backgroundColor);
+                            }
+                            else
+                            {
+                                screen.PutPixel(j + tileSize, 
+                                                i + tileSize, 
+                                img.Data()[img.Width() * 
+                                                       (319 - i) +  j]);
+                            }
+                        }
                     }
+                    coords.x = -1;
+                    coords.y = -1;
                 }
-                coords.x = -1;
-                coords.y = -1;
+                else
+                {
+                    coords.x = screen.XCoord();
+                    coords.y = screen.YCoord();
+                    
+                    lifeFlag = 1;
+                }
+                
+                int x = screen.Width() / tileSize - 1;
+                screen.PutPixels((x * tileSize), 
+                                 (2 * (lifes + 1) * tileSize), 
+                                 backgroundColor,
+                                 ' ');
             }
             break;
         case MovementDir::RIGHT:
@@ -86,19 +173,48 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
                 old_coords.x  = coords.x;
                 coords.x     += move_dist;
             }
-            if (screen.IsEmptyX(coords.x, coords.y))
+            if (screen.IsEmptyX(coords.x + tileSize, coords.y))
             {
-                Image img ("resources/game_over.png");
-                for (int i = 0; i < 320; ++i)
+                lifes -= 1;
+                if (lifes == 0)
                 {
-                    for (int j = 0; j < 320; ++j)
+                    Image img ("resources/game_over.png");
+                    for (int i = 0; i < 320; ++i)
                     {
-                        screen.PutPixel(j + tileSize, i + tileSize, 
-                            img.Data()[img.Width() * (319 - i) +  j]);
+                        for (int j = 0; j < 320; ++j)
+                        {
+                            if (img.Data()[img.Width() * 
+                                (319 - i) +  j].a == 0)
+                            {
+                                screen.PutPixel(j + tileSize, 
+                                                i + tileSize, 
+                                backgroundColor);
+                            }
+                            else
+                            {
+                                screen.PutPixel(j + tileSize, 
+                                                i + tileSize, 
+                                img.Data()[img.Width() * 
+                                                       (319 - i) +  j]);
+                            }
+                        }
                     }
+                    coords.x = -1;
+                    coords.y = -1;
                 }
-                coords.x = -1;
-                coords.y = -1;
+                else
+                {
+                    coords.x = screen.XCoord();
+                    coords.y = screen.YCoord();
+                    
+                    lifeFlag = 1;
+                }
+                
+                int x = screen.Width() / tileSize - 1;
+                screen.PutPixels((x * tileSize), 
+                                 (2 * (lifes + 1) * tileSize), 
+                                 backgroundColor,
+                                 ' ');
             }
             break;
         case MovementDir::ACTION:
@@ -140,10 +256,104 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
             
             if ((x >= 0) && (y >= 0))
             {
-                //Tiles treasure("resources/tr1.png", 4);
-                screen.PutPixels(x, y, backgroundColor, '.');
+                Tiles treasure;
+                treasure.SetPic("resources/treas2.png", 1);
+                screen.PutPixels(x, y, treasure.Pic(), '#');
+                if (lifes < 5)
+                {
+                    lifes += 1;
+                    Tiles life;
+                    life.SetPic("resources/life.png", 1);
+                    
+                    int h = screen.Width() / tileSize - 1;
+                    screen.PutPixels((h * tileSize), 
+                                     (2 * lifes * tileSize), 
+                                     life.Pic(),
+                                     ' ');
+                }
             }
             
+            
+            // Action for trap
+            
+            // UP
+            if (screen.IsTrapY(coords.x, coords.y + tileSize + 1))
+            {
+                x = coords.x;
+                y = coords.y + tileSize;
+            }
+            // DOWN
+            else if (screen.IsTrapY(coords.x, coords.y - 1))
+            {
+                x = coords.x;
+                y = coords.y - tileSize;
+            }
+            // LEFT
+            else if (screen.IsTrapX(coords.x - 1, coords.y))
+            {
+                x = coords.x - tileSize;
+                y = coords.y;
+            }
+            // RIGHT
+            else if (screen.IsTrapX(coords.x + tileSize + 1, 
+                                        coords.y))
+            {
+                x = coords.x + tileSize;
+                y = coords.y;
+            }
+            else 
+            {
+                x = -1;
+                y = -1;
+            }
+            
+            if ((x >= 0) && (y >= 0))
+            {
+                Tiles trap;
+                trap.SetPic("resources/trap2.png", 1);
+                screen.PutPixels(x, y, trap.Pic(), '#');
+                
+                lifes -= 1;
+                if (lifes == 0)
+                {
+                    Image img ("resources/game_over.png");
+                    for (int i = 0; i < 320; ++i)
+                    {
+                        for (int j = 0; j < 320; ++j)
+                        {
+                            if (img.Data()[img.Width() * 
+                                (319 - i) +  j].a == 0)
+                            {
+                                screen.PutPixel(j + tileSize, 
+                                                i + tileSize, 
+                                backgroundColor);
+                            }
+                            else
+                            {
+                                screen.PutPixel(j + tileSize, 
+                                                i + tileSize, 
+                                img.Data()[img.Width() * 
+                                                       (319 - i) +  j]);
+                            }
+                        }
+                    }
+                    coords.x = -1;
+                    coords.y = -1;
+                }
+                else
+                {
+                    coords.x = screen.XCoord();
+                    coords.y = screen.YCoord();
+                    
+                    lifeFlag = 1;
+                }
+                
+                int x = screen.Width() / tileSize - 1;
+                screen.PutPixels((x * tileSize), 
+                                 (2 * (lifes + 1) * tileSize), 
+                                 backgroundColor,
+                                 ' ');
+            }
             
             // Action for door
             
@@ -186,15 +396,15 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
             
             if ((x >= 0) && (y >= 0))
             {
-                //Tiles treasure;
-                //treasure.SetPic("resources/door1.png", 13);
-                //screen.PutPixels(x, y, treasure.Pic(), 'x');
-                screen.NewRoom(next);
-                screen.ReadFile(screen.Room(), screen.Type());
-                old_coords.x  = coords.x;
-                coords.x      = screen.XCoord();
-                old_coords.y  = coords.y;
-                coords.y      = screen.YCoord();
+                Tiles treasure;
+                treasure.SetPic("resources/door1.png", 13);
+                screen.PutPixels(x, y, treasure.Pic(), 'x');
+                newRoom = next;
+                
+                old_coords.x = coords.x;
+                old_coords.y = coords.y;
+                coords.x = screen.XCoord();
+                coords.y = screen.YCoord();
             }
             
             
@@ -202,13 +412,22 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
             
             if (screen.IsExit(coords.x, coords.y))
             {
-                Image img ("resources/game_over.png");
+                Image img ("resources/win.png");
                 for (int i = 0; i < 320; ++i)
                 {
                     for (int j = 0; j < 320; ++j)
                     {
-                        screen.PutPixel(j + tileSize, i + tileSize, 
+                        if (img.Data()[img.Width() * 
+                            (319 - i) +  j].a == 0)
+                        {
+                            screen.PutPixel(j + tileSize, i + tileSize, 
+                            backgroundColor);
+                        }
+                        else
+                        {
+                            screen.PutPixel(j + tileSize, i + tileSize, 
                             img.Data()[img.Width() * (319 - i) +  j]);
+                        }
                     }
                 }
                 coords.x = -1;
@@ -224,17 +443,51 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
 
 void Player::Draw(Image &screen)
 {
-    if ((coords.x >= 0) && (coords.y >= 0))
+    if ((coords.x >= 0) && (coords.y >= 0) && (newRoom == 0))
     {
         Tiles person;
-        person.SetPic("resources/pacman1.png", 10);
+        
         if (Moved())
         {
             screen.PutPixels(old_coords.x, old_coords.y, 
                              backgroundColor, '.');
             old_coords = coords;
+            position = (position + 1) % 8;
         }
-    
+        else 
+        {
+            position = 0;
+        }
+        
+        Tiles treasure;
+        treasure.SetPic(screen.Treas(screen.TreasCount() / 10), 1);
+        screen.TreasNext();
+        for (int i = 0; i < screen.TreasLength(); ++i)
+        {
+            if (screen.IsTreasure(screen.TreasCoordX(i), 
+                                  screen.TreasCoordY(i)))
+            {
+                screen.PutPixels(screen.TreasCoordX(i), 
+                                 screen.TreasCoordY(i), 
+                                 treasure.Pic(), 'G');
+            }
+        }
+        
+        Tiles trap;
+        trap.SetPic(screen.Trap(screen.TrapCount() / 10), 1);
+        screen.TrapNext();
+        for (int i = 0; i < screen.TrapLength(); ++i)
+        {
+            if (screen.IsTrap(screen.TrapCoordX(i), 
+                              screen.TrapCoordY(i)))
+            {
+                screen.PutPixels(screen.TrapCoordX(i), 
+                                 screen.TrapCoordY(i), 
+                                 trap.Pic(), 'T');
+            }
+        }
+        
+        person.SetPic(positions[position / 2], 1);
         screen.PutPixels(coords.x, coords.y, person.Pic(), '.');
     }
 }

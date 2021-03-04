@@ -55,6 +55,27 @@ Image::Image(int a_width, int a_height, int a_channels)
         channels       = a_channels;
         self_allocated = true;
     }
+    
+    int x = width / tileSize - 1;
+    
+    for (int y = height / tileSize - 1; y >= 0; --y)
+    {
+        PutPixels((x * tileSize), 
+                  (y * tileSize), 
+                  backgroundColor,
+                  sym);
+    }
+    
+    Tiles lifes;
+    lifes.SetPic("resources/life.png", 1);
+    
+    for (int y = 1; y < 4; ++y)
+    {
+        PutPixels((x * tileSize), 
+                  (2 * y * tileSize), 
+                  lifes.Pic(),
+                  ' ');
+    }
 
     ReadFile(Room(), Type());
 }
@@ -91,31 +112,35 @@ int Image::Save(const std::string &a_path)
 
 void Image::ReadFile(const std::string &a_file, const char a_type)
 {
+    Tiles empty;
     Tiles wall;
     Tiles door;
     Tiles treasure;
+    Tiles trapP;
+    Tiles exit;
+    
+    door.SetPic("resources/door.png", 13);
+    treasure.SetPic(treas[0], 1);
+    trapP.SetPic(trap[0], 1);
+    exit.SetPic("resources/exit.png", 2);
             
     switch(a_type)
     {
         case 'A':
-            wall.SetPic("resources/blue1.png", 3);
-            door.SetPic("resources/door.png", 13);
-            treasure.SetPic("resources/tr.png", 60);
+            empty.SetPic("resources/ice_empty.png", 1);
+            wall.SetPic("resources/ice.png", 1);
             break;
         case 'B':
-            wall.SetPic("resources/red1.png", 3);
-            door.SetPic("resources/door.png", 13);
-            treasure.SetPic("resources/tr.png", 60);
+            empty.SetPic("resources/fire_empty.png", 1);
+            wall.SetPic("resources/fire.png", 1);
             break;
         case 'C':
-            wall.SetPic("resources/blue1.png", 3);
-            door.SetPic("resources/door.png", 13);
-            treasure.SetPic("resources/tr.png", 60);
+            empty.SetPic("resources/stone_empty.png", 1);
+            wall.SetPic("resources/stone.png", 1);
             break;
         case 'D':
-            wall.SetPic("resources/blue1.png", 3);
-            door.SetPic("resources/door.png", 13);
-            treasure.SetPic("resources/tr.png", 60);
+            empty.SetPic("resources/grass_empty.png", 1);
+            wall.SetPic("resources/grass.png", 1);
             break;
         default:
             break;
@@ -123,6 +148,12 @@ void Image::ReadFile(const std::string &a_file, const char a_type)
     
     char   sym;
     Pixel  pixCol = {0, 0, 0, 255};
+    
+    treasLength = 0;
+    treasCoord.clear();
+    
+    trapLength = 0;
+    trapCoord.clear();
     
     std::ifstream file(a_file);
     if (!(file.is_open()))
@@ -132,16 +163,15 @@ void Image::ReadFile(const std::string &a_file, const char a_type)
 
     for (int y = height / tileSize - 1; y >= 0; --y)
     {
-        for (int x = 0; x < width / tileSize; ++x)
+        for (int x = 0; x < width / tileSize - 1; ++x)
         {
             file.get(sym);
             switch (sym)
             {
                 case ' ': // empty space
-                    pixCol = {255, 0, 0, 255};
                     PutPixels((x * tileSize), 
                               (y * tileSize), 
-                              pixCol, 
+                              empty.Pic(), 
                               sym);
                     break;
                 case '#': // block
@@ -164,20 +194,45 @@ void Image::ReadFile(const std::string &a_file, const char a_type)
                 case 'x': // room exit
                     PutPixels((x * tileSize), 
                               (y * tileSize), 
+                              wall.Pic(),
+                              sym);
+                    PutPixels((x * tileSize), 
+                              (y * tileSize), 
                               door.Pic(),
                               sym);
                     break;
                 case 'Q': // maze exit
-                    pixCol = {128, 0, 128, 255};
                     PutPixels((x * tileSize), 
                               (y * tileSize), 
-                              pixCol,
+                              exit.Pic(),
                               sym);
                     break;
                 case 'G': // teasure
+                    treasCoord.push_back(x * tileSize);
+                    treasCoord.push_back(y * tileSize);
+                    treasLength += 1;
+                    
+                    PutPixels((x * tileSize), 
+                              (y * tileSize), 
+                              backgroundColor,
+                              sym);
                     PutPixels((x * tileSize), 
                               (y * tileSize), 
                               treasure.Pic(),
+                              sym);
+                    break;
+                case 'T': // trap
+                    trapCoord.push_back(x * tileSize);
+                    trapCoord.push_back(y * tileSize);
+                    trapLength += 1;
+                    
+                    PutPixels((x * tileSize), 
+                              (y * tileSize), 
+                              backgroundColor,
+                              sym);
+                    PutPixels((x * tileSize), 
+                              (y * tileSize), 
+                              trapP.Pic(),
                               sym);
                     break;
                 default:

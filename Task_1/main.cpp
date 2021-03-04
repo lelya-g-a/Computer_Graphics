@@ -1,6 +1,7 @@
 #include "common.h"
 #include "Image.h"
 #include "Player.h"
+#include "Tiles.h"
 
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
@@ -8,7 +9,8 @@
 #include <unistd.h>
 
 // GLsizei - data type in OpenGL for sizes, 32 bits
-constexpr GLsizei WINDOW_WIDTH  = 352; // 20 available cells and border
+constexpr GLsizei WINDOW_WIDTH  = 368; 
+                           // 20 available cells, border and info table
 constexpr GLsizei WINDOW_HEIGHT = 352; // 20 available cells and border
 
 // Mouse contron (useless for this task)
@@ -209,10 +211,75 @@ int main(int argc, char** argv)
 
         glfwSwapBuffers(window);
         
+        int next = player.IsNewRoom();
+        if (next != 0)
+        {
+            sleep(1);
+            screenBuffer.NewRoom(next);
+            Tiles tile;
+            switch(screenBuffer.Type())
+            {
+                case 'A':
+                    tile.SetPic("resources/ice.png", 1);
+                    break;
+                case 'B':
+                    tile.SetPic("resources/fire.png", 1);
+                    break;
+                case 'C':
+                    tile.SetPic("resources/stone.png", 1);
+                    break;
+                case 'D':
+                    tile.SetPic("resources/grass.png", 1);
+                    break;
+                default:
+                    break;
+            }
+            for (int i = 0; i < 22; ++i)
+            {
+                for (int j = 0; j <= i; j++)
+                {
+                    screenBuffer.PutPixels
+                        ((i * tileSize), (j * tileSize), 
+                         tile.Pic(), '.');
+                    screenBuffer.PutPixels
+                        ((j * tileSize), (i * tileSize), 
+                         tile.Pic(), '.');
+                    
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+                    GL_CHECK_ERRORS;
+
+                    glDrawPixels(WINDOW_WIDTH, WINDOW_HEIGHT, GL_RGBA, 
+                                 GL_UNSIGNED_BYTE, screenBuffer.Data()); 
+                    GL_CHECK_ERRORS;
+
+                    glfwSwapBuffers(window);
+                }
+            }
+            
+            screenBuffer.ReadFile(screenBuffer.Room(), 
+                                  screenBuffer.Type());
+            player.SetCoords(screenBuffer.XCoord(),
+                             screenBuffer.YCoord());
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+            GL_CHECK_ERRORS;
+
+            glDrawPixels(WINDOW_WIDTH, WINDOW_HEIGHT, GL_RGBA, 
+                         GL_UNSIGNED_BYTE, screenBuffer.Data()); 
+            GL_CHECK_ERRORS;
+
+            glfwSwapBuffers(window);
+        }
+        
         if ((player.GetX() < 0) || (player.GetY() < 0))
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
             sleep(3);
+        }
+        
+        
+        if (player.IsLife())
+        {
+            sleep(1);
         }
     }
     // End of game loop

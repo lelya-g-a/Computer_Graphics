@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 constexpr int tileSize = 16;
 
@@ -84,6 +85,8 @@ struct Image
                 (object[width * y + x + tileSize - 1] == 'x') ||
                 (object[width * y + x] == 'Q')                || 
                 (object[width * y + x + tileSize - 1] == 'Q') ||
+                (object[width * y + x] == 'T')                || 
+                (object[width * y + x + tileSize - 1] == 'T') ||
                 (object[width * y + x] == 'G')                || 
                 (object[width * y + x + tileSize - 1] == 'G'));
     }
@@ -97,6 +100,8 @@ struct Image
                 (object[width * (y + tileSize - 1) + x] == 'x') ||
                 (object[width * y + x] == 'Q')                  || 
                 (object[width * (y + tileSize - 1) + x] == 'Q') ||
+                (object[width * y + x] == 'T')                  || 
+                (object[width * (y + tileSize - 1) + x] == 'T') ||
                 (object[width * y + x] == 'G')                  || 
                 (object[width * (y + tileSize - 1) + x] == 'G'));
     }
@@ -116,6 +121,20 @@ struct Image
                 (object[width * (y + tileSize - 1) + x] == 'G'));
     }
     
+    // Is there a trap on the top or bottom
+    bool IsTrapY(int x, int y)
+    {
+        return ((object[width * y + x] == 'T') && 
+                (object[width * y + x + tileSize - 1] == 'T'));
+    }
+
+    // Is there a trap on the right or left
+    bool IsTrapX(int x, int y)
+    {
+        return ((object[width * y + x] == 'T') && 
+                (object[width * (y + tileSize - 1) + x] == 'T'));
+    }
+    
     // Is there a door on the top or bottom
     bool IsDoorY(int x, int y)
     {
@@ -133,14 +152,14 @@ struct Image
     // Is there an epty space on the top or bottom
     bool IsEmptyY(int x, int y)
     {
-        return ((object[width * y + x] == ' ') && 
+        return ((object[width * y + x] == ' ') || 
                 (object[width * y + x + tileSize - 1] == ' '));
     }
     
     // Is there an empty space on the right or left
     bool IsEmptyX(int x, int y)
     {
-        return ((object[width * y + x] == ' ') && 
+        return ((object[width * y + x] == ' ') || 
                 (object[width * (y + tileSize - 1) + x] == ' '));
     }
     
@@ -162,6 +181,32 @@ struct Image
     
     void ReadFile (const std::string &a_file, const char a_type);
 
+    
+    int TreasCoordX   (int num) {return treasCoord[num * 2];}
+    int TreasCoordY   (int num) {return treasCoord[num * 2 + 1];}
+    std::string Treas (int num) {return treas[num];}
+    int TreasLength   ()        {return treasLength;}
+    void TreasNext    ()        {treasCount = (treasCount + 1) % 20;}
+    int TreasCount    ()        {return treasCount;}
+    
+    bool IsTreasure(int x, int y)
+    {
+        return (object[width * y + x] == 'G');
+    }
+    
+    
+    int TrapCoordX   (int num) {return trapCoord[num * 2];}
+    int TrapCoordY   (int num) {return trapCoord[num * 2 + 1];}
+    std::string Trap (int num) {return trap[num];}
+    int TrapLength   ()        {return trapLength;}
+    void TrapNext    ()        {trapCount = (trapCount + 1) % 20;}
+    int TrapCount    ()        {return trapCount;}
+    
+    bool IsTrap(int x, int y)
+    {
+        return (object[width * y + x] == 'T');
+    }
+    
 
     ~Image();
 
@@ -180,4 +225,16 @@ private:
     char*        types    = nullptr;
     std::string* files    = nullptr;
     int          currRoom = 0;
+    
+    std::vector <int> treasCoord;
+    std::string treas [2] = {"resources/treas0.png",
+                             "resources/treas1.png"};
+    int treasCount  = 0;
+    int treasLength = 0;
+    
+    std::vector <int> trapCoord;
+    std::string trap [2] = {"resources/trap0.png",
+                            "resources/trap1.png"};
+    int trapCount  = 0;
+    int trapLength = 0;
 };
