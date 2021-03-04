@@ -58,6 +58,7 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
                     coords.y = screen.YCoord();
                     
                     lifeFlag = 1;
+                    trapFlag = 1;
                 }
                 
                 int x = screen.Width() / tileSize - 1;
@@ -108,6 +109,7 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
                     coords.y = screen.YCoord();
                     
                     lifeFlag = 1;
+                    trapFlag = 1;
                 }
                 
                 int x = screen.Width() / tileSize - 1;
@@ -118,103 +120,118 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
             }
             break;
         case MovementDir::LEFT:
-            if (!screen.IsBlockX(coords.x - 1, coords.y))
+            if (!trapFlag)
             {
-                old_coords.x  = coords.x;
-                coords.x     -= move_dist;
-            }
-            if (screen.IsEmptyX(coords.x, coords.y))
-            {
-                lifes -= 1;
-                if (lifes == 0)
+                if (!screen.IsBlockX(coords.x - 1, coords.y))
                 {
-                    Image img ("resources/game_over.png");
-                    for (int i = 0; i < 320; ++i)
+                    old_coords.x  = coords.x;
+                    coords.x     -= move_dist;
+                }
+                if (screen.IsEmptyX(coords.x, coords.y))
+                {
+                    lifes -= 1;
+                    if (lifes == 0)
                     {
-                        for (int j = 0; j < 320; ++j)
+                        Image img ("resources/game_over.png");
+                        for (int i = 0; i < 320; ++i)
                         {
-                            if (img.Data()[img.Width() * 
-                                (319 - i) +  j].a == 0)
+                            for (int j = 0; j < 320; ++j)
                             {
-                                screen.PutPixel(j + tileSize, 
-                                                i + tileSize, 
-                                backgroundColor);
-                            }
-                            else
-                            {
-                                screen.PutPixel(j + tileSize, 
-                                                i + tileSize, 
-                                img.Data()[img.Width() * 
-                                                       (319 - i) +  j]);
+                                if (img.Data()[img.Width() * 
+                                    (319 - i) +  j].a == 0)
+                                {
+                                    screen.PutPixel(j + tileSize, 
+                                                    i + tileSize, 
+                                    backgroundColor);
+                                }
+                                else
+                                {
+                                    screen.PutPixel(j + tileSize, 
+                                                    i + tileSize, 
+                                    img.Data()[img.Width() * 
+                                                    (319 - i) +  j]);
+                                }
                             }
                         }
+                        coords.x = -1;
+                        coords.y = -1;
                     }
-                    coords.x = -1;
-                    coords.y = -1;
-                }
-                else
-                {
-                    coords.x = screen.XCoord();
-                    coords.y = screen.YCoord();
+                    else
+                    {
+                        coords.x = screen.XCoord();
+                        coords.y = screen.YCoord();
+                        
+                        lifeFlag = 1;
+                    }
                     
-                    lifeFlag = 1;
+                    int x = screen.Width() / tileSize - 1;
+                    screen.PutPixels((x * tileSize), 
+                                     (2 * (lifes + 1) * tileSize), 
+                                     backgroundColor,
+                                     ' ');
                 }
-                
-                int x = screen.Width() / tileSize - 1;
-                screen.PutPixels((x * tileSize), 
-                                 (2 * (lifes + 1) * tileSize), 
-                                 backgroundColor,
-                                 ' ');
+            }
+            else 
+            {
+                trapFlag = 0;
             }
             break;
         case MovementDir::RIGHT:
-            if (!screen.IsBlockX(coords.x + tileSize + 1, coords.y))
+            if (!trapFlag)
             {
-                old_coords.x  = coords.x;
-                coords.x     += move_dist;
-            }
-            if (screen.IsEmptyX(coords.x + tileSize, coords.y))
-            {
-                lifes -= 1;
-                if (lifes == 0)
+                if (!screen.IsBlockX(coords.x + tileSize + 1, coords.y))
                 {
-                    Image img ("resources/game_over.png");
-                    for (int i = 0; i < 320; ++i)
+                    old_coords.x  = coords.x;
+                    coords.x     += move_dist;
+                }
+                if (screen.IsEmptyX(coords.x + tileSize, coords.y))
+                {
+                    lifes -= 1;
+                    if (lifes == 0)
                     {
-                        for (int j = 0; j < 320; ++j)
+                        Image img ("resources/game_over.png");
+                        for (int i = 0; i < 320; ++i)
                         {
-                            if (img.Data()[img.Width() * 
-                                (319 - i) +  j].a == 0)
+                            for (int j = 0; j < 320; ++j)
                             {
-                                screen.PutPixel(j + tileSize, 
-                                                i + tileSize, 
-                                backgroundColor);
-                            }
-                            else
-                            {
-                                screen.PutPixel(j + tileSize, 
-                                                i + tileSize, 
-                                img.Data()[img.Width() * 
-                                                       (319 - i) +  j]);
+                                if (img.Data()[img.Width() * 
+                                    (319 - i) +  j].a == 0)
+                                {
+                                    screen.PutPixel(j + tileSize, 
+                                                    i + tileSize, 
+                                    backgroundColor);
+                                }
+                                else
+                                {
+                                    screen.PutPixel(j + tileSize, 
+                                                    i + tileSize, 
+                                    img.Data()[img.Width() * 
+                                                    (319 - i) +  j]);
+                                }
                             }
                         }
+                        
+                        coords.x = -1;
+                        coords.y = -1;
                     }
-                    coords.x = -1;
-                    coords.y = -1;
-                }
-                else
-                {
-                    coords.x = screen.XCoord();
-                    coords.y = screen.YCoord();
+                    else
+                    {
+                        coords.x = screen.XCoord();
+                        coords.y = screen.YCoord();
+                        
+                        lifeFlag = 1;
+                    }
                     
-                    lifeFlag = 1;
+                    int x = screen.Width() / tileSize - 1;
+                    screen.PutPixels((x * tileSize), 
+                                     (2 * (lifes + 1) * tileSize), 
+                                     backgroundColor,
+                                     ' ');
                 }
-                
-                int x = screen.Width() / tileSize - 1;
-                screen.PutPixels((x * tileSize), 
-                                 (2 * (lifes + 1) * tileSize), 
-                                 backgroundColor,
-                                 ' ');
+            }
+            else 
+            {
+                trapFlag = 0;
             }
             break;
         case MovementDir::ACTION:

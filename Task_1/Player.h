@@ -68,4 +68,5 @@ private:
     int  move_speed = 2;
     int  lifes      = 3;
     bool lifeFlag   = 0;
+    bool trapFlag   = 0;
 };

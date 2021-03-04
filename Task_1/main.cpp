@@ -199,6 +199,11 @@ int main(int argc, char** argv)
 
         processPlayerMovement(player, screenBuffer);
         player.Draw(screenBuffer);
+        
+        if (player.IsLife())
+        {
+            sleep(1);
+        }
 
         // Clean buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
@@ -270,16 +275,11 @@ int main(int argc, char** argv)
             glfwSwapBuffers(window);
         }
         
+        
         if ((player.GetX() < 0) || (player.GetY() < 0))
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
             sleep(3);
-        }
-        
-        
-        if (player.IsLife())
-        {
-            sleep(1);
         }
     }
     // End of game loop
