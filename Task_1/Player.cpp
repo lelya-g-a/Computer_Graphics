@@ -342,9 +342,6 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
                 }
                 else
                 {
-                    coords.x = screen.XCoord();
-                    coords.y = screen.YCoord();
-                    
                     lifeFlag = 1;
                 }
                 
