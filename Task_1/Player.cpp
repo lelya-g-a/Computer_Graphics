@@ -1,5 +1,7 @@
 #include "Player.h"
 #include <iostream>
+#include <algorithm>
+#include <cmath>
 
 
 bool Player::Moved() const
@@ -59,6 +61,7 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
                     
                     lifeFlag = 1;
                     trapFlag = 1;
+                    positions = positionR;
                 }
                 
                 int x = screen.Width() / tileSize - 1;
@@ -110,6 +113,7 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
                     
                     lifeFlag = 1;
                     trapFlag = 1;
+                    positions = positionR;
                 }
                 
                 int x = screen.Width() / tileSize - 1;
@@ -122,6 +126,7 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
         case MovementDir::LEFT:
             if (!trapFlag)
             {
+                positions = positionL;
                 if (!screen.IsBlockX(coords.x - 1, coords.y))
                 {
                     old_coords.x  = coords.x;
@@ -173,12 +178,14 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
             }
             else 
             {
+                positions = positionR;
                 trapFlag = 0;
             }
             break;
         case MovementDir::RIGHT:
             if (!trapFlag)
             {
+                positions = positionR;
                 if (!screen.IsBlockX(coords.x + tileSize + 1, coords.y))
                 {
                     old_coords.x  = coords.x;
@@ -231,6 +238,7 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
             }
             else 
             {
+                positions = positionR;
                 trapFlag = 0;
             }
             break;
@@ -369,6 +377,48 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
                                  ' ');
             }
             
+            
+            // Action for empty treasure
+            
+            // UP
+            if (screen.IsTrY(coords.x, coords.y + tileSize + 1))
+            {
+                x = coords.x;
+                y = coords.y + tileSize;
+            }
+            // DOWN
+            else if (screen.IsTrY(coords.x, coords.y - 1))
+            {
+                x = coords.x;
+                y = coords.y - tileSize;
+            }
+            // LEFT
+            else if (screen.IsTrX(coords.x - 1, coords.y))
+            {
+                x = coords.x - tileSize;
+                y = coords.y;
+            }
+            // RIGHT
+            else if (screen.IsTrX(coords.x + tileSize + 1, 
+                                        coords.y))
+            {
+                x = coords.x + tileSize;
+                y = coords.y;
+            }
+            else 
+            {
+                x = -1;
+                y = -1;
+            }
+            
+            if ((x >= 0) && (y >= 0))
+            {
+                Tiles tr;
+                tr.SetPic("resources/tr2.png", 1);
+                screen.PutPixels(x, y, tr.Pic(), '#');
+            }
+            
+            
             // Action for door
             
             int next;
@@ -501,7 +551,67 @@ void Player::Draw(Image &screen)
             }
         }
         
+        Tiles tr;
+        tr.SetPic(screen.Tr(screen.TrCount() / 10), 1);
+        screen.TrNext();
+        for (int i = 0; i < screen.TrLength(); ++i)
+        {
+            if (screen.IsTr(screen.TrCoordX(i), 
+                            screen.TrCoordY(i)))
+            {
+                screen.PutPixels(screen.TrCoordX(i), 
+                                 screen.TrCoordY(i), 
+                                 tr.Pic(), 'E');
+            }
+        }
+        
         person.SetPic(positions[position / 2], 1);
         screen.PutPixels(coords.x, coords.y, person.Pic(), '.');
+        
+        
+        Tiles light;
+        light.SetPic(screen.Light(screen.LightCount() / 10), 1);
+        screen.LightNext();
+        for (int i = 0; i < screen.LightLength(); ++i)
+        {
+            int lightX = screen.LightCoordX(i);
+            int lightY = screen.LightCoordY(i);
+            int colorX = lightX + tileSize / 2;
+            int colorY = lightY + tileSize / 2;
+            
+            screen.PutPixels(lightX, lightY, 
+                             light.Pic(), 'L');
+
+            for (int y = lightY - tileSize;
+                     y < lightY + 2 * tileSize; 
+                     ++y)
+            {
+                for (int x = lightX - tileSize;
+                         x < lightX + 2 * tileSize; 
+                         ++x)
+                {
+                    if ((x >= 0) && (x <= screen.Width() - tileSize - 1) 
+                     && (y >= 0) && (y <= screen.Height() - 1))
+                    {
+                        Pixel pix = screen.GetPixel(x, y);
+                        
+                        // distance to the source
+                        int cX = std::abs(colorX - x);
+                        int cY = std::abs(colorY - y);
+                        int dist = sqrt(cX * cX + cY * cY);
+                        
+                        if (!screen.IsFirst())
+                        {
+                            pix.r = std::max(0, pix.r - std::max(0, 100 - std::abs(10 - (screen.LightCount() + 19) % 20) / 3 - 5*dist));
+                            pix.g = std::max(0, pix.g - std::max(0, 90 - std::abs(10 - (screen.LightCount() + 19) % 20) / 3 - 5*dist));
+                        }
+                        
+                        pix.r = std::min(255, pix.r + std::max(0, 100 - std::abs(10 - screen.LightCount() % 20) / 3 - 5*dist));
+                        pix.g = std::min(255, pix.g + std::max(0, 90 - std::abs(10 - screen.LightCount() % 20) / 3 - 5*dist));
+                        screen.PutPixel(x, y, pix);
+                    }
+                }
+            }
+        }
     }
 }

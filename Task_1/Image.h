@@ -83,10 +83,14 @@ struct Image
                 (object[width * y + x + tileSize - 1] == '#') ||
                 (object[width * y + x] == 'x')                || 
                 (object[width * y + x + tileSize - 1] == 'x') ||
+                (object[width * y + x] == 'L')                || 
+                (object[width * y + x + tileSize - 1] == 'L') ||
                 (object[width * y + x] == 'Q')                || 
                 (object[width * y + x + tileSize - 1] == 'Q') ||
                 (object[width * y + x] == 'T')                || 
                 (object[width * y + x + tileSize - 1] == 'T') ||
+                (object[width * y + x] == 'E')                || 
+                (object[width * y + x + tileSize - 1] == 'E') ||
                 (object[width * y + x] == 'G')                || 
                 (object[width * y + x + tileSize - 1] == 'G'));
     }
@@ -98,10 +102,14 @@ struct Image
                 (object[width * (y + tileSize - 1) + x] == '#') ||
                 (object[width * y + x] == 'x')                  || 
                 (object[width * (y + tileSize - 1) + x] == 'x') ||
+                (object[width * y + x] == 'L')                  || 
+                (object[width * (y + tileSize - 1) + x] == 'L') ||
                 (object[width * y + x] == 'Q')                  || 
                 (object[width * (y + tileSize - 1) + x] == 'Q') ||
                 (object[width * y + x] == 'T')                  || 
                 (object[width * (y + tileSize - 1) + x] == 'T') ||
+                (object[width * y + x] == 'E')                  || 
+                (object[width * (y + tileSize - 1) + x] == 'E') ||
                 (object[width * y + x] == 'G')                  || 
                 (object[width * (y + tileSize - 1) + x] == 'G'));
     }
@@ -133,6 +141,20 @@ struct Image
     {
         return ((object[width * y + x] == 'T') && 
                 (object[width * (y + tileSize - 1) + x] == 'T'));
+    }
+    
+    // Is there an empty treasure on the top or bottom
+    bool IsTrY(int x, int y)
+    {
+        return ((object[width * y + x] == 'E') && 
+                (object[width * y + x + tileSize - 1] == 'E'));
+    }
+
+    // Is there an empty treasure on the right or left
+    bool IsTrX(int x, int y)
+    {
+        return ((object[width * y + x] == 'E') && 
+                (object[width * (y + tileSize - 1) + x] == 'E'));
     }
     
     // Is there a door on the top or bottom
@@ -207,6 +229,34 @@ struct Image
         return (object[width * y + x] == 'T');
     }
     
+    
+    int TrCoordX   (int num) {return trCoord[num * 2];}
+    int TrCoordY   (int num) {return trCoord[num * 2 + 1];}
+    std::string Tr (int num) {return tr[num];}
+    int TrLength   ()        {return trLength;}
+    void TrNext    ()        {trCount = (trCount + 1) % 20;}
+    int TrCount    ()        {return trCount;}
+    
+    bool IsTr(int x, int y)
+    {
+        return (object[width * y + x] == 'E');
+    }
+    
+    
+    int LightCoordX   (int num) {return lightCoord[num * 2];}
+    int LightCoordY   (int num) {return lightCoord[num * 2 + 1];}
+    std::string Light (int num) {return light[num];}
+    int LightLength   ()        {return lightLength;}
+    void LightNext    ()        {lightCount = (lightCount + 1) % 40;}
+    int LightCount    ()        {return lightCount;}
+    
+    
+    bool IsFirst()
+    {
+        bool tmp = firstFlag;
+        firstFlag = 0;
+        return tmp;
+    }
 
     ~Image();
 
@@ -237,4 +287,20 @@ private:
                             "resources/trap1.png"};
     int trapCount  = 0;
     int trapLength = 0;
+    
+    std::vector <int> trCoord;
+    std::string tr [2] = {"resources/tr0.png",
+                          "resources/tr1.png"};
+    int trCount  = 0;
+    int trLength = 0;
+    
+    std::vector <int> lightCoord;
+    std::string light [4] = {"resources/light0.png",
+                             "resources/light1.png",
+                             "resources/light2.png",
+                             "resources/light3.png"};
+    int lightCount  = 0;
+    int lightLength = 0;
+    
+    bool firstFlag = 0;
 };

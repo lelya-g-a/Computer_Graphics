@@ -117,11 +117,15 @@ void Image::ReadFile(const std::string &a_file, const char a_type)
     Tiles door;
     Tiles treasure;
     Tiles trapP;
+    Tiles trP;
+    Tiles lightP;
     Tiles exit;
     
     door.SetPic("resources/door.png", 13);
     treasure.SetPic(treas[0], 1);
     trapP.SetPic(trap[0], 1);
+    trP.SetPic(tr[0], 1);
+    lightP.SetPic(light[0], 1);
     exit.SetPic("resources/exit.png", 2);
             
     switch(a_type)
@@ -154,6 +158,12 @@ void Image::ReadFile(const std::string &a_file, const char a_type)
     
     trapLength = 0;
     trapCoord.clear();
+    
+    trLength = 0;
+    trCoord.clear();
+    
+    lightLength = 0;
+    lightCoord.clear();
     
     std::ifstream file(a_file);
     if (!(file.is_open()))
@@ -235,13 +245,43 @@ void Image::ReadFile(const std::string &a_file, const char a_type)
                               trapP.Pic(),
                               sym);
                     break;
+                case 'E': // trap
+                    trCoord.push_back(x * tileSize);
+                    trCoord.push_back(y * tileSize);
+                    trLength += 1;
+                    
+                    PutPixels((x * tileSize), 
+                              (y * tileSize), 
+                              backgroundColor,
+                              sym);
+                    PutPixels((x * tileSize), 
+                              (y * tileSize), 
+                              trP.Pic(),
+                              sym);
+                    break;
+                case 'L': // light
+                    lightCoord.push_back(x * tileSize);
+                    lightCoord.push_back(y * tileSize);
+                    lightLength += 1;
+                    
+                    PutPixels((x * tileSize), 
+                              (y * tileSize), 
+                              backgroundColor,
+                              sym);
+                    PutPixels((x * tileSize), 
+                              (y * tileSize), 
+                              lightP.Pic(),
+                              sym);
+                    break;
                 default:
                     break;
             }
         }
         file.get(sym); // '\n'
     }
-
+    
+    firstFlag = 1;
+    
     file.close();
 }
 

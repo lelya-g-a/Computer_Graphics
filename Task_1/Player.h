@@ -59,10 +59,17 @@ private:
     Point old_coords {.x = 10, .y = 10};
     Pixel color      {.r = 255, .g = 255, .b = 0, .a = 255};
     
-    std::string positions [4] = {"resources/person0.png",
-                                 "resources/person1.png",
-                                 "resources/person2.png",
-                                 "resources/person3.png"};
+
+    std::string positionR [4] = {"resources/person0R.png",
+                                 "resources/person1R.png",
+                                 "resources/person2R.png",
+                                 "resources/person3R.png"};
+    std::string positionL [4] = {"resources/person0L.png",
+                                 "resources/person1L.png",
+                                 "resources/person2L.png",
+                                 "resources/person3L.png"};
+    std::string* positions = positionR;
+    
     int  position   = 0; 
     int  newRoom    = 0;
     int  move_speed = 2;
