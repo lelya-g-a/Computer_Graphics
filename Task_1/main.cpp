@@ -125,9 +125,10 @@ int initGL()
                                                           << std::endl;
 
     std::cout << "Controls: "              << std::endl; 
-    std::cout << "Press right mouse button to capture/release mouse cursor  "
-                                           << std::endl;
+    std::cout << "Press right mouse button";
+    std::cout << "to capture/release mouse cursor  " << std::endl;
     std::cout << "W, A, S, D - movement  " << std::endl;
+    std::cout << "E - additional action  " << std::endl;
     std::cout << "press ESC to exit"       << std::endl;
 
     return 0;
@@ -168,9 +169,7 @@ int main(int argc, char** argv)
     GLenum gl_error  = glGetError();
     while (gl_error != GL_NO_ERROR)
         gl_error = glGetError();
-        
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
     Image screenBuffer(WINDOW_WIDTH, WINDOW_HEIGHT, 4);
 
@@ -189,11 +188,6 @@ int main(int argc, char** argv)
     // Game loop
     while (!glfwWindowShouldClose(window))
     {
-        // Measuring time intervals
-        //GLfloat currentFrame = glfwGetTime();
-        //deltaTime = currentFrame - lastFrame;
-        //lastFrame = currentFrame;
-        
         // Process events from queue
         glfwPollEvents();
 
@@ -309,34 +303,6 @@ int main(int argc, char** argv)
                     glfwSwapBuffers(window);
                 }
             }
-            
-            
-                             
-            /*for (int i = 0; i < 22; ++i)
-            {
-                for (int j = 0; j <= i; j++)
-                {
-                    for (int h = 0; h < tileSize; ++h)
-                        for (int w = 0; w < tileSize; ++w)
-                        {
-                            screenTmp.PutPixel
-                                ((i * tileSize) + w, (j * tileSize) + h, 
-                                 screenBuffer.GetPixel((i * tileSize) + w, (j * tileSize) + h));
-                            screenTmp.PutPixel
-                                ((j * tileSize) + w, (i * tileSize) + h, 
-                                 screenBuffer.GetPixel((j * tileSize) + w, (i * tileSize) + h));
-                        }
-                    
-                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-                    GL_CHECK_ERRORS;
-
-                    glDrawPixels(WINDOW_WIDTH, WINDOW_HEIGHT, GL_RGBA, 
-                                 GL_UNSIGNED_BYTE, screenTmp.Data()); 
-                    GL_CHECK_ERRORS;
-
-                    glfwSwapBuffers(window);
-                }
-            }*/
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
             GL_CHECK_ERRORS;
