@@ -220,6 +220,17 @@ int main(int argc, char** argv)
         if (next != 0)
         {
             sleep(1);
+            Image screenTmp(WINDOW_WIDTH, WINDOW_HEIGHT, 4);
+            
+            for (int i = 0; i < WINDOW_HEIGHT; ++i)
+            {
+                for (int j = 0; j < WINDOW_WIDTH; ++j)
+                {
+                    screenTmp.PutPixel(j, i, 
+                        screenBuffer.GetPixel(j, i));
+                }
+            }
+            
             screenBuffer.NewRoom(next);
             Tiles tile;
             switch(screenBuffer.Type())
@@ -239,32 +250,94 @@ int main(int argc, char** argv)
                 default:
                     break;
             }
-            for (int i = 0; i < 22; ++i)
+            
+            screenBuffer.ReadFile(screenBuffer.Room(), 
+                                  screenBuffer.Type());
+            player.SetCoords(screenBuffer.XCoord(),
+                             screenBuffer.YCoord());
+            
+            screenTmp.PutPixels (0, 0, tile.Pic(), '.');
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+            GL_CHECK_ERRORS;
+
+            glDrawPixels(WINDOW_WIDTH, WINDOW_HEIGHT, GL_RGBA, 
+                         GL_UNSIGNED_BYTE, screenTmp.Data()); 
+            GL_CHECK_ERRORS;
+
+            glfwSwapBuffers(window);
+            
+            for (int i = 2; i < 22; ++i)
             {
                 for (int j = 0; j <= i; j++)
                 {
-                    screenBuffer.PutPixels
+                    screenTmp.PutPixels
                         ((i * tileSize), (j * tileSize), 
                          tile.Pic(), '.');
-                    screenBuffer.PutPixels
+                    screenTmp.PutPixels
                         ((j * tileSize), (i * tileSize), 
                          tile.Pic(), '.');
+                         
+                    for (int h = 0; h < tileSize; ++h)
+                    {
+                        for (int w = 0; w < tileSize; ++w)
+                        {
+                            if (j > 0)
+                            {
+                                screenTmp.PutPixel
+                                    ((i - 1) * tileSize + w, 
+                                     (j - 1) * tileSize + h, 
+                                     screenBuffer.GetPixel(
+                                     (i - 1) * tileSize + w, 
+                                     (j - 1) * tileSize + h));
+                                screenTmp.PutPixel
+                                    ((j - 1) * tileSize + w, 
+                                     (i - 1) * tileSize + h, 
+                                     screenBuffer.GetPixel(
+                                     (j - 1) * tileSize + w, 
+                                     (i - 1) * tileSize + h));
+                            }
+                        }
+                    }
                     
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
                     GL_CHECK_ERRORS;
 
                     glDrawPixels(WINDOW_WIDTH, WINDOW_HEIGHT, GL_RGBA, 
-                                 GL_UNSIGNED_BYTE, screenBuffer.Data()); 
+                                 GL_UNSIGNED_BYTE, screenTmp.Data()); 
                     GL_CHECK_ERRORS;
 
                     glfwSwapBuffers(window);
                 }
             }
             
-            screenBuffer.ReadFile(screenBuffer.Room(), 
-                                  screenBuffer.Type());
-            player.SetCoords(screenBuffer.XCoord(),
-                             screenBuffer.YCoord());
+            
+                             
+            /*for (int i = 0; i < 22; ++i)
+            {
+                for (int j = 0; j <= i; j++)
+                {
+                    for (int h = 0; h < tileSize; ++h)
+                        for (int w = 0; w < tileSize; ++w)
+                        {
+                            screenTmp.PutPixel
+                                ((i * tileSize) + w, (j * tileSize) + h, 
+                                 screenBuffer.GetPixel((i * tileSize) + w, (j * tileSize) + h));
+                            screenTmp.PutPixel
+                                ((j * tileSize) + w, (i * tileSize) + h, 
+                                 screenBuffer.GetPixel((j * tileSize) + w, (i * tileSize) + h));
+                        }
+                    
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+                    GL_CHECK_ERRORS;
+
+                    glDrawPixels(WINDOW_WIDTH, WINDOW_HEIGHT, GL_RGBA, 
+                                 GL_UNSIGNED_BYTE, screenTmp.Data()); 
+                    GL_CHECK_ERRORS;
+
+                    glfwSwapBuffers(window);
+                }
+            }*/
+            
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
             GL_CHECK_ERRORS;
 

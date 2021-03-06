@@ -464,6 +464,7 @@ void Player::ProcessInput(MovementDir dir, Image &screen)
                 treasure.SetPic("resources/door1.png", 13);
                 screen.PutPixels(x, y, treasure.Pic(), 'x');
                 newRoom = next;
+                positions = positionR;
                 
                 old_coords.x = coords.x;
                 old_coords.y = coords.y;
@@ -602,12 +603,20 @@ void Player::Draw(Image &screen)
                         
                         if (!screen.IsFirst())
                         {
-                            pix.r = std::max(0, pix.r - std::max(0, 100 - std::abs(10 - (screen.LightCount() + 19) % 20) / 3 - 5*dist));
-                            pix.g = std::max(0, pix.g - std::max(0, 90 - std::abs(10 - (screen.LightCount() + 19) % 20) / 3 - 5*dist));
+                            pix.r = std::max(0, pix.r - std::max(0, 100 
+                            - std::abs(10 - (screen.LightCount() + 19) 
+                            % 20) / 3 - 5*dist));
+                            pix.g = std::max(0, pix.g - std::max(0, 90 
+                            - std::abs(10 - (screen.LightCount() + 19) 
+                            % 20) / 3 - 5*dist));
                         }
                         
-                        pix.r = std::min(255, pix.r + std::max(0, 100 - std::abs(10 - screen.LightCount() % 20) / 3 - 5*dist));
-                        pix.g = std::min(255, pix.g + std::max(0, 90 - std::abs(10 - screen.LightCount() % 20) / 3 - 5*dist));
+                        pix.r = std::min(255, pix.r + std::max(0, 100 - 
+                        std::abs(10 - screen.LightCount() 
+                        % 20) / 3 - 5*dist));
+                        pix.g = std::min(255, pix.g + std::max(0, 90 - 
+                        std::abs(10 - screen.LightCount() 
+                        % 20) / 3 - 5*dist));
                         screen.PutPixel(x, y, pix);
                     }
                 }
