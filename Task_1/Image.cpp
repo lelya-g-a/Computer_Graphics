@@ -200,6 +200,11 @@ void Image::ReadFile(const std::string &a_file, const char a_type)
                 case '@': // player
                     xCoordPlayer = x * tileSize;
                     yCoordPlayer = y * tileSize;
+                    pixCol = backgroundColor;
+                    PutPixels((x * tileSize), 
+                              (y * tileSize), 
+                              pixCol,
+                              '.');
                     break;
                 case 'x': // room exit
                     PutPixels((x * tileSize), 
